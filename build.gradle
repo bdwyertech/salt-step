@@ -28,7 +28,7 @@ repositories {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.4'
+    gradleVersion = '2.5'
 }
 
 defaultTasks 'test', 'testCoberturaReport', 'assemble'
