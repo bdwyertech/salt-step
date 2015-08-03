@@ -26,6 +26,7 @@
 
 package org.rundeck.plugin.salt;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Before;
@@ -46,6 +47,19 @@ public class SaltApiNodeStepPlugin_ExtractSaltResponseTest extends AbstractSaltA
     @Test
     public void testExtractOutputForJid() throws Exception {
         setupResponse(get, HttpStatus.SC_OK, HOST_JSON_RESPONSE);
+
+        Assert.assertEquals("Expected host response to be parsed out from json response", HOST_RESPONSE,
+                plugin.extractOutputForJid(client, AUTH_TOKEN, OUTPUT_JID, PARAM_MINION_NAME));
+
+        assertThatJobPollAttemptedSuccessfully();
+    }
+
+    @Test
+    public void testExtractOutputForJidStateHighstate() throws Exception {
+
+        final String response = IOUtils.toString(this.getClass().getResourceAsStream("/testStateHighstate.json"),
+                "UTF-8");
+        setupResponse(get, HttpStatus.SC_OK, response);
 
         Assert.assertEquals("Expected host response to be parsed out from json response", HOST_RESPONSE,
                 plugin.extractOutputForJid(client, AUTH_TOKEN, OUTPUT_JID, PARAM_MINION_NAME));

@@ -122,6 +122,7 @@ public class SaltApiNodeStepPlugin implements NodeStepPlugin {
     protected static final String YAML_RESPONSE_ACCEPT_TYPE = "application/x-yaml";
 
     protected static final String SALT_OUTPUT_RETURN_KEY = "return";
+    protected static final String SALT_OUTPUT_COMPLEX_TYPE_KEY = "data";
     protected static final Type JOB_RESPONSE_TYPE = new TypeToken<Map<String, List<Object>>>() {}.getType();
 
     // -- Parameter names for REST calls to salt-api --
@@ -414,6 +415,12 @@ public class SaltApiNodeStepPlugin implements NodeStepPlugin {
                         logWrapper.debug("Received response for jobs/%s = %s", jid, response);
                         Object responseObj = minionResponse.get(minionId);
                         return gson.toJson(responseObj);
+                    } else if (minionResponse.containsKey(SALT_OUTPUT_COMPLEX_TYPE_KEY)) {
+                        logWrapper.debug("Received complexe response for jobs/%s = %s", jid, response);
+                        Object responseObj = ((Map<String, Object>) minionResponse.get(SALT_OUTPUT_COMPLEX_TYPE_KEY)).get(minionId);
+                        return gson.toJson(responseObj);
+                    } else {
+                        logWrapper.debug("Can't find/parse anything (job not finish or salt api change ?) for jobs/%s = %s", jid, response);
                     }
                 }
                 return null;
